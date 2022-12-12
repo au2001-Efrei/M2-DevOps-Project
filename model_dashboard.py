@@ -23,4 +23,4 @@ if taille > 0 and nb_rooms > 0:
     prediction = model.predict(X)
 
     ## afficher la prediction
-    st.write('le prix de la maison est : {}'.format(prediction[0]))
+    st.write('le prix de la maison est : <span id="result">{}</span>'.format(prediction[0]), unsafe_allow_html=True)

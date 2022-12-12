@@ -1,0 +1,12 @@
+{
+  "name": "devops-project",
+  "version": "1.0.0",
+  "description": "M2 DevOps and Continuous Delivery Project",
+  "private": true,
+  "scripts": {
+    "test": "cypress run --record false"
+  },
+  "devDependencies": {
+    "cypress": "^12.0.2"
+  }
+}

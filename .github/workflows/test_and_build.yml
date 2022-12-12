@@ -46,4 +46,4 @@ jobs:
     - name: Cypress run
       uses: cypress-io/github-action@v4
       with:
-        start: streamlit run model_dashboard.py
+        start: streamlit run model_dashboard.py --server.headless=true

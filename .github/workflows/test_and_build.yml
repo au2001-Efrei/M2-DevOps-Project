@@ -33,6 +33,7 @@ jobs:
     - name: Upload model artifact
       uses: actions/upload-artifact@v3
       with:
+        name: regression.joblib
         path: regression.joblib
 
   unit_tests:
@@ -54,6 +55,11 @@ jobs:
 
     - name: Install dependencies
       run: pip install -r requirements.txt
+
+    - name: Download model artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: regression.joblib
 
     - name: Run Pytest
       run: pytest
@@ -77,6 +83,11 @@ jobs:
 
     - name: Install dependencies
       run: pip install -r requirements.txt
+
+    - name: Download model artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: regression.joblib
 
     - name: Cypress run
       uses: cypress-io/github-action@v4
@@ -107,6 +118,11 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Download model artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: regression.joblib
 
     - name: Build and push image
       uses: docker/build-push-action@v3

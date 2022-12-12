@@ -1,7 +1,7 @@
 const houses = [
-    ['206', '2', '0', 'Ouest', '170511.48186231407'],
-    ['187', '1', '1', 'Est', '170491.68708712346'],
-    ['194', '3', '1', 'Est', '170531.209714976'],
+    ['206', '2', '0', 'Ouest', 170511],
+    ['187', '1', '1', 'Est', 170491],
+    ['194', '3', '1', 'Est', 170531],
 ];
 
 describe('Case 1', () => {
@@ -14,7 +14,7 @@ describe('Case 1', () => {
         cy.get('input[aria-label="Nombre de chambre"]').type(nb_rooms);
         cy.get('input[aria-label="Y a un jardin"]').type(garden);
 
-        cy.get('#result').invoke('text').should('eq', price);
+        cy.get('#result').invoke('text').then(parseInt).should('eq', price);
     });
 
     it('should predict all remaining houses', () => {
@@ -25,7 +25,7 @@ describe('Case 1', () => {
             cy.get('input[aria-label="Nombre de chambre"]').type(nb_rooms);
             cy.get('input[aria-label="Y a un jardin"]').type(garden);
 
-            cy.get('#result').invoke('text').should('eq', price);
+            cy.get('#result').invoke('text').then(parseInt).should('eq', price);
         });
     });
 });

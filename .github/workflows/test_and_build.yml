@@ -5,14 +5,46 @@ on:
     branches:
     - main
 
+  pull_request:
+    branches:
+    - main
+
 jobs:
+  train:
+    name: Train model
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: pip
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Train and build model
+      run: python build_model.py
+
+    - name: Upload model artifact
+      uses: actions/upload-artifact@v3
+      with:
+        path: regression.joblib
+
   unit_tests:
+    needs:
+    - train
+
     name: Run unit tests
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Setup Python 3.11
       uses: actions/setup-python@v4
@@ -27,6 +59,9 @@ jobs:
       run: pytest
 
   e2e_tests:
+    needs:
+    - train
+
     name: Run end-to-end tests
     runs-on: ubuntu-latest
 
@@ -47,3 +82,36 @@ jobs:
       uses: cypress-io/github-action@v4
       with:
         start: streamlit run model_dashboard.py --server.headless=true
+
+  build:
+    needs:
+    - train
+    - unit_tests
+    - e2e_tests
+
+    name: Build and publish Docker image to GitHub registry
+
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+
+    permissions:
+      packages: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build and push image
+      uses: docker/build-push-action@v3
+      with:
+        push: true
+        tags: |
+          ghcr.io/${{ github.repository }}:latest
+          ghcr.io/${{ github.repository }}:commit-${{ github.sha }}
